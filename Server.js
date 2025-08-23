@@ -1,6 +1,11 @@
 const express = require('express')
+const path = require('path')
+const dotenv = require('dotenv').config()
 const app = express()
 const port = 3000
+
+const connection = require("./Config/db")
+const RegisterModel = require("./Models/register.models")
 
 app.use(express.json())
 app.use(express.urlencoded({extended : true}))
