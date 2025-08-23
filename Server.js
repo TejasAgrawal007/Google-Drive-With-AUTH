@@ -1,5 +1,6 @@
 const express = require('express')
 const path = require('path')
+const bcrypt = require("bcrypt")
 const dotenv = require('dotenv').config()
 const app = express()
 const port = 3000
@@ -21,7 +22,19 @@ app.get('/login', (req, res) => {
   res.render('login')
 })
 
+app.post("/resgiter", async (req, res) => {
+    const {name, email, password} = req.body;
 
+    const hash = await bcrypt.hashSync(password, 10);
+
+    const user = new RegisterModel({
+        name,
+        email,
+        password : hash
+    })
+    await user.save()
+    res.redirect("/login")
+})
 
 
 app.listen(port, () => {
