@@ -21,5 +21,23 @@
         <button type="submit">Upload</button>
     </form>
 
+
+    <br> <br>
+
+
+    <% if(files.length > 0){ %>
+        <h2>Files:</h2>
+        <ul>
+
+            <% files.forEach((items) => { %>
+                <li>
+                    <a href="" target="_blank"><%= items %></a>
+                </li>
+            <% }) %>
+
+        </ul>
+           
+    <% } %>
+
 </body>
 </html>

@@ -1,6 +1,9 @@
 const express = require('express');
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
+const multer = require("multer");
+const path = require('path');
+const fs = require('fs');
 const route = require('express').Router();
 
 const RegisterModel = require("../Models/register.models")
@@ -18,6 +21,7 @@ route.get('/pageNotFound', (req, res) => {
 })
 
 
+
 route.get('/home', async (req, res) => {
 
     let token = req.cookies.token;
@@ -29,7 +33,14 @@ route.get('/home', async (req, res) => {
     try {
         const decoded = jwt.verify(token, process.env.jwt_SECRET);
         const user = await RegisterModel.findOne({ email: decoded.email })
-        return res.render("home", { name: user.name })
+
+        fs.readdir('public/uploads', (err, files) => {
+            if (err) {
+                return res.send("Unable to scan files!");
+            }
+            return res.render("home", { name: user.name, files: files });
+        })
+
     } catch (error) {
         return res.redirect("/pageNotFound");
     }
@@ -81,6 +92,22 @@ route.post("/login", async (req, res) => {
 route.get("/logout", (req, res) => {
     res.cookie("token", "")
     res.redirect("/login")
+})
+
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/uploads')
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname))
+    }
+})
+
+const upload = multer({ storage: storage })
+
+route.post("/upload", upload.single("file"), (req, res) => {
+    res.redirect("/home")
 })
 
 
