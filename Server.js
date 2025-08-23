@@ -22,6 +22,12 @@ app.get('/login', (req, res) => {
   res.render('login')
 })
 
+app.get('/home', (req, res) => {
+  res.render('home')
+})
+
+
+
 app.post("/resgiter", async (req, res) => {
     const {name, email, password} = req.body;
 
@@ -34,6 +40,34 @@ app.post("/resgiter", async (req, res) => {
     })
     await user.save()
     res.redirect("/login")
+})
+
+
+app.post("/login", async (req, res) => {
+
+  let {email, password} = req.body;
+
+  const user = await LoginModel.find({email})
+
+  if(!user){
+    return res.json({message : "User not found"})
+  }
+
+  const isMathch = await bcrypt.compare(password, user[0].password);
+
+  if(!isMathch){
+    return res.json({message : "Invalid credentials"})
+  }
+
+  let loginUser = LoginModel.create({
+    email,
+    password : user[0].password
+  })
+
+  if(loginUser){
+      res.redirect("/home")
+  }
+
 })
 
 
