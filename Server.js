@@ -23,11 +23,6 @@ const mainAUTHroute = require("./Routes/mainAUTH.routes")
 app.use("/", mainAUTHroute)
 
 
-
-
-
-
-
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
