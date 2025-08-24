@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        body{
+        body {
             font-family: sans-serif;
             height: 100vh;
             padding: 25px;
         }
     </style>
 </head>
+
 <body>
-    <h1>Hello <%= name %></h1>
+    <h1>Hello <%= name %>
+    </h1>
     <br> <br>
 
     <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" >
+        <input type="file" name="file">
         <button type="submit">Upload</button>
     </form>
 
@@ -25,19 +28,22 @@
     <br> <br>
 
 
-    <% if(files.length > 0){ %>
+    <% if(files.length> 0){ %>
         <h2>Files:</h2>
         <ul>
 
-            <% files.forEach((items) => { %>
+            <% files.forEach((items)=> { %>
                 <li>
-                    <a href="" target="_blank"><%= items %></a>
+                    <a href="" target="_blank">
+                        <%= items %>
+                    </a>
                 </li>
-            <% }) %>
+                <% }) %>
 
         </ul>
-           
-    <% } %>
+
+        <% } %>
 
 </body>
+
 </html>

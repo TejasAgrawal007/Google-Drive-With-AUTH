@@ -33,10 +33,11 @@ route.get('/home', async (req, res) => {
     try {
         const decoded = jwt.verify(token, process.env.jwt_SECRET);
         const user = await RegisterModel.findOne({ email: decoded.email })
+        const userFolder = `public/uploads/${user.email}`;
 
-        fs.readdir('public/uploads', (err, files) => {
+        fs.readdir(userFolder, (err, files) => {
             if (err) {
-                return res.send("Unable to scan files!");
+                return res.render("home", { name: user.name, files: [] });
             }
             return res.render("home", { name: user.name, files: files });
         })
@@ -97,7 +98,16 @@ route.get("/logout", (req, res) => {
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'public/uploads')
+        // Get user email from JWT
+        const token = req.cookies.token;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userFolder = `public/uploads/${decoded.email}`;
+
+        if(!fs.existsSync(userFolder)){
+            fs.mkdirSync(userFolder, { recursive: true });
+        }
+
+        cb(null, userFolder)
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + path.extname(file.originalname))
