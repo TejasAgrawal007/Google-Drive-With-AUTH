@@ -4,46 +4,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+
     <title>Document</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            height: 100vh;
-            padding: 25px;
-        }
-    </style>
+
 </head>
 
-<body>
-    <h1>Hello <%= name %>
+<body class="bg-[#121212] min-h-screen flex flex-col items-center justify-center p-4">
+  <div class="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl bg-[#1E1E1E] rounded-3xl shadow-lg border border-white/12 p-8 sm:p-10 flex flex-col gap-8">
+    <h1 class="text-3xl font-bold text-gray-100 tracking-tight leading-tight">
+      Welcome Back
+      <mark class="ml-2 rounded-md bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-700 px-3 py-1 text-white text-2xl shadow-lg">
+        <%= name %>
+      </mark>
     </h1>
-    <br> <br>
 
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file">
-        <button type="submit">Upload</button>
+    <!-- Upload Form -->
+    <form action="/upload" method="post" enctype="multipart/form-data" class="flex flex-col sm:flex-row gap-4 items-center">
+      <input type="file" name="file" 
+        class="flex-grow rounded-lg border border-white/20 bg-[#2A2A2A] text-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75 transition" />
+      <button type="submit" 
+        class="rounded-lg bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-semibold px-6 py-3 shadow-lg hover:brightness-110 hover:scale-105 transition transform focus:ring-4 focus:ring-indigo-400">
+        Upload
+      </button>
     </form>
 
+    <!-- Files List -->
+    <% if(files.length > 0) { %>
+    <div class="flex flex-col gap-4">
+      <h2 class="text-xl font-semibold text-gray-300">Files:</h2>
+      <ul class="flex flex-col gap-3">
+        <% files.forEach((file) => { %>
+          <li class="bg-[#2A2A2A] rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between border border-white/15 shadow-md hover:shadow-lg transition-shadow">
+            <span class="text-gray-200 flex-grow break-all"><%= file %></span>
+            <div class="flex gap-3 mt-3 sm:mt-0">
 
-    <br> <br>
+              <a href="/download/<%= file %>" 
+                 class="px-4 py-2 rounded-lg bg-gradient-to-r from-green-700 to-green-500 text-white shadow hover:brightness-110 transition">
+                Download
+              </a>
 
-
-    <% if(files.length> 0){ %>
-        <h2>Files:</h2>
-        <ul>
-
-            <% files.forEach((items)=> { %>
-                <li>
-                    <a href="" target="_blank">
-                        <%= items %>
-                    </a>
-                </li>
-                <% }) %>
-
-        </ul>
-
-        <% } %>
-
+              <a href="/delete/<%= file %>" 
+                 class="px-4 py-2 rounded-lg bg-gradient-to-r from-amber-600 to-yellow-500 text-white shadow hover:brightness-110 transition">
+                Delete
+              </a>
+            </div>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+    <% } %>
+  </div>
 </body>
+
 
 </html>

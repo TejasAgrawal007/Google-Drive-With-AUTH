@@ -110,7 +110,8 @@ const storage = multer.diskStorage({
         cb(null, userFolder)
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname))
+        const uniqueSuffix = Date.now() + "_" + path.extname(file.originalname);
+        cb(null,  uniqueSuffix);
     }
 })
 
@@ -119,6 +120,52 @@ const upload = multer({ storage: storage })
 route.post("/upload", upload.single("file"), (req, res) => {
     res.redirect("/home")
 })
+
+
+route.get("/download/:filename", async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) return res.redirect("/login");
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userFolder = path.join(__dirname, "../public/uploads", decoded.email);
+        const filePath = path.join(userFolder, req.params.filename);
+
+        // Security: Ensure file is inside user's folder
+        if (!filePath.startsWith(userFolder)) return res.status(403).send("Forbidden");
+
+        if (fs.existsSync(filePath)) {
+            return res.download(filePath);
+        } else {
+            return res.status(404).send("File not found");
+        }
+    } catch (err) {
+        return res.redirect("/pageNotFound");
+    }
+});
+
+route.get("/delete/:filename", async (req, res) => {
+    const token = req.cookies.token;
+    if (!token) return res.redirect("/login");
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userFolder = path.join(__dirname, "../public/uploads", decoded.email);
+        const filePath = path.join(userFolder, req.params.filename);
+
+        // Security: Ensure file is inside user's folder
+        if (!filePath.startsWith(userFolder)) return res.status(403).send("Forbidden");
+
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+        return res.redirect("/home");
+    } catch (err) {
+        return res.redirect("/pageNotFound");
+    }
+});
+
+
 
 
 
